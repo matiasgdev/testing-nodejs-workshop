@@ -7,11 +7,7 @@ const response = {
     json: jest.fn()
 }
 
-const createReqObj = (id) => ({
-    params: {
-        id
-    }
-})
+const request = {}
 
 beforeEach(() => {
     jest.clearAllMocks()
@@ -22,26 +18,18 @@ describe('validateMiddleware', () => {
 
     test('fires next event with a valid id', () => {
 
-        validateMiddleware(createReqObj('1'), response, next)
+        validateMiddleware(request, response, next, '1')
 
         expect(next).toHaveBeenCalled()
 
     })
 
-    test('not call next event with a invalid id', () => {
-
-        validateMiddleware(createReqObj('invalid'), response, next)
-
-        expect(next).not.toHaveBeenCalled()
-
-    })
-
     test('should response with status 400', () => {
 
-        validateMiddleware(createReqObj('invalid'), response, next)
+        validateMiddleware(request, response, next, 'invalid')
 
         expect(response.status).toHaveBeenCalledWith(400)
-        
+        expect(next).not.toHaveBeenCalled()
         expect(response.json).toHaveBeenCalledWith(
             expect.objectContaining({
                 message: 'Must provide a valid ID [number]'
