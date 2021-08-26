@@ -1,5 +1,4 @@
 const request = require('supertest')
-const UserService = require('../src/services/User')
 const {app, server} = require('../src/app')
 const axios = require('axios')
 
@@ -31,6 +30,7 @@ beforeAll(() => {
 })
 
 afterAll(() => {
+    api.off()
     server.close()
 })
 
