@@ -1,6 +1,5 @@
 const { Router } = require('express')
 const UserService = require('../services/User')
-const validateMiddleware = require('../helpers/validateMiddleware') 
 
 const users = []
 
@@ -12,7 +11,7 @@ router.get('/users', async (_, response) => {
 })
 
 
-router.get('/users/:id', validateMiddleware, async (request, response) => {
+router.get('/users/:id', async (request, response) => {
     const { id } = request.params
     
     const user = await UserService.getById(id)
