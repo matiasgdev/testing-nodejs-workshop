@@ -9,9 +9,9 @@ app.use(express.json())
 
 app.use(usersRoute)
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Server running on port ${port}`)
 })
 
 
-module.exports = app
+module.exports = { app, server }

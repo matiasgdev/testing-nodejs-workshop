@@ -1,16 +1,71 @@
 const request = require('supertest')
+const UserService = require('../src/services/User')
+const {app, server} = require('../src/app')
+const axios = require('axios')
 
-const app = require('../src/app')
+jest.mock('axios')
 
-/**
- * All users
- */
+const api = request(app)
 
-describe('All users endpoint', () => {
-    test('retrieve all users in a object', async () => {
-        const response = await request(app).get('/users').set('Accept', 'application/json')
-        
-        expect(response.statusCode).toBe(200)
-        expect(response.headers['content-type']).toBeDefined()
+const _mockedUsers = [
+    {
+        name: 'foo baz',
+        email: 'baz@bar.com'
+    },
+    {
+        name: 'baz foo',
+        email: 'foo@bar.com'
+    },
+    {
+        name: 'admin',
+        email: 'me@admin.com'
+    },
+
+]
+
+// let users
+
+beforeAll(() => {
+    // users =  await UserService.getAll()
+    axios.get.mockResolvedValue({ data: _mockedUsers})
+})
+
+afterAll(() => {
+    server.close()
+})
+
+describe('GET /users', () => {
+
+    test('response should be json', async () => {
+       await api
+            .get('/users')
+            .expect(200)
+            .expect('Content-Type', /application\/json/)
     })
+
+    // test('data should be match', async () => {
+    //     const response = await api.get('/users')
+
+    //     expect(response.body.users).toHaveLength(users.length)
+    // })
+
+
+    test('data length should be match (mocked version)', async () => {
+        const response = await api.get('/users')
+        const { users } = response.body
+
+        // expect(users).toHaveLength(_mockedUsers.length)
+        expect(users.length).toBe(_mockedUsers.length)
+
+    })
+
+    test('should user admin be in the DB', async () => {
+        const response = await api.get('/users')
+        const { users } = response.body
+        const names = users.map(user => user.name)
+
+        expect(names).toContain('admin')
+    })
+
+
 })
